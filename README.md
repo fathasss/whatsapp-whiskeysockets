@@ -20,8 +20,8 @@ Bu proje, **Node.js** ve **Baileys** kullanarak çoklu WhatsApp hesapları ile m
 1. Depoyu klonlayın:
 
 ```bash
-git clone https://github.com/fathasss/Whatsapp-WhiskeySocket.git
-cd Whatsapp-WhiskeySocket
+git clone https://github.com/fathasss/whatsapp-whiskeysockets.git
+cd whatsapp-whiskeysockets
 ```
 
 2. Bağımlılıkları yükleyin:
@@ -33,7 +33,7 @@ npm install
 3. `.env` dosyasını oluşturun ve gerekli ortam değişkenlerini ekleyin:
 
 ```env
-MONGO_URI=mongodb://localhost:27017/whatsapp-baileys
+MONGO_URI=mongodb://localhost:27017/whatsappbot
 PORT=3002
 ```
 
@@ -50,19 +50,19 @@ node app.js
 ### API Endpoints
 
 * **QR Kodu Alma:**
-  `GET /api/qr/:accountId`
+  `GET /whatsapp/qr/:accountId`
   QR kodu görüntüler. Hesap bağlı değilse hata mesajı döner.
 
 * **Mesaj Listesi:**
-  `GET /api/messages:accountId`
+  `GET /whatsapp/get-messages:accountId`
   Belirli bir hesaba ait veya tüm mesajları listeler.
 
 * **WhatsApp Hesabı Başlatma:**
-  `POST /api/start/:accountId`
+  `POST /whatsapp/start/:accountId`
   Belirtilen WhatsApp hesabını başlatır.
 
 * **Mesaj Gönderme:**
-  `POST /api/send-message/:accountId`
+  `POST /whatsapp/send/:accountId`
   Mesaj tipine göre (text, image, video) mesaj gönderir.
   Örnek body:
 
@@ -152,7 +152,7 @@ node app.js
 * Mongoose
 * Baileys (WhatsApp Web API)
 * dotenv
-
+* Swagger
 ---
 
 ## Lisans

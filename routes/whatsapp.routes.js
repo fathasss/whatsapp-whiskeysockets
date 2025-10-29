@@ -1,9 +1,9 @@
 const express = require("express");
-const { sendMessage } = require("../sockets/whatsapp.listener");
+const { sendMessage } = require("../infrastructure/whatsapp.listener");
 const {
   createBaileysClient,
   stopBaileysClient,
-} = require("../sockets/whatsapp.client");
+} = require("../infrastructure/whatsapp.client");
 const router = express.Router();
 const { accounts } = require("../globals/accounts.dtos");
 const messageService = require("../services/messages.service");

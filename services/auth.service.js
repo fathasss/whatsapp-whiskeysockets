@@ -1,10 +1,10 @@
-const User = require("../domain/repositories/user.repository");
+const UserRepository = require("../domain/repositories/user.repository");
 const  generateToken  = require("../middleware");
 const bcrypt = require("bcrypt"); 
 
 class AuthService {
   async login(username, password) {
-    const user = await User.findOne({ username });
+    const user = await UserRepository.findOne({ username });
     if (!user) throw new Error("User not found");
 
     // Hash ile karşılaştır

@@ -1,24 +1,24 @@
-const Customer = require("../domain/repositories/customer.repository");
+const CustomerRepository = require("../domain/repositories/customer.repository");
 
 class CustomerService {
   async getAll() {
-    return await Customer.find();
+    return await CustomerRepository.find();
   }
 
   async createOrUpdate(customerData) {
-    const existing = await Customer.findOne({
+    const existing = await CustomerRepository.findOne({
       customerId: customerData.customerId,
     });
     if (existing) {
       Object.assign(existing, customerData);
       return await existing.save();
     } else {
-      return await Customer.create(customerData);
+      return await CustomerRepository.create(customerData);
     }
   }
 
   async getById(customerId) {
-    return await Customer.findOne({ customerId });
+    return await CustomerRepository.findOne({ customerId });
   }
 }
 

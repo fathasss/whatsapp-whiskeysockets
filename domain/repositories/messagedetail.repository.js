@@ -1,27 +1,31 @@
-const MessageDetail = require("../entities/messagedetail.entity");
+const MessageDetailEntity = require("../entities/messagedetail.entity");
 class MessageDetailRepository {
   async findAll(filter = {}, limit = 100) {
-    return await MessageDetail.find(filter).limit(limit);
+    return await MessageDetailEntity.find(filter).limit(limit);
   }
   async findById(messageDetailId) {
-    return await MessageDetail.find({ messageDetailId });
+    return await MessageDetailEntity.find({ messageDetailId });
   }
   async findOne(query) {
-    return await MessageDetail.findOne(query);
+    return await MessageDetailEntity.findOne(query);
+  }
+
+  async find(query = {}, limit = 50) {
+    return await MessageDetailEntity.find(query).limit(limit);
   }
   async create(messageDetailData) {
-    const messageDetail = new MessageDetail(messageDetailData);
+    const messageDetail = new MessageDetailEntity(messageDetailData);
     return await messageDetail.save();
   }
   async update(messageDetailId, updateData) {
-    return await MessageDetail.find.findByIdAndUpdate(
+    return await MessageDetailEntity.find.findByIdAndUpdate(
       messageDetailId,
       updateData,
       { new: true }
     );
   }
   async delete(messageDetailId) {
-    return await MessageDetail.findByIdAndDelete(messageDetailId);
+    return await MessageDetailEntity.findByIdAndDelete(messageDetailId);
   }
 }
 module.exports = new MessageDetailRepository();

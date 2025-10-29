@@ -1,30 +1,32 @@
-const Messages = require("../domain/repositories/message.repository");
+const MessageRepository = require("../domain/repositories/message.repository");
 
 class MessagesService {
   async getAll() {
-    return await Messages.find();
+    return await MessageRepository.findAll();
   }
 
   async getMessagesByAccountId(accountId, limit = 50, since) {
     const query = { accountId };
     if (since) query.lastMessageDate = { $gte: new Date(since) };
-    return await Messages.find(query)
-      .sort({ lastMessageDate: -1 })
-      .limit(limit);
+    return await MessageRepository.find(query, limit).sort({
+      lastMessageDate: -1,
+    });
   }
 
   async createOrUpdate(messageData) {
-    const existing = await Messages.findOne({ chatId: messageData.chatId });
+    const existing = await MessageRepository.findOne({
+      chatId: messageData.chatId,
+    });
     if (existing) {
       Object.assign(existing, messageData);
       return await existing.save();
     } else {
-      return await Messages.create(messageData);
+      return await MessageRepository.create(messageData);
     }
   }
 
   async getByChatId(chatId) {
-    return await Messages.findOne({ chatId });
+    return await MessageRepository.findOne({ chatId });
   }
 }
 

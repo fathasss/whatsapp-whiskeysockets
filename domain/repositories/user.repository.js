@@ -1,24 +1,24 @@
-const User = require("../entities/user.entity");
+const UserEntity = require("../entities/user.entity");
 
 class UserRepository {
   async findAll(filter = {}, limit = 100) {
-    return await User.find(filter).limit(limit);
+    return await UserEntity.find(filter).limit(limit);
   }
   async findById(userId) {
-    return await User.findById({ userId });
+    return await UserEntity.findById({ userId });
   }
   async findOne(query) {
-    return await User.findOne(query);
+    return await UserEntity.findOne(query);
   }
   async create(userData) {
-    const user = new User(userData);
+    const user = new UserEntity(userData);
     return await user.save();
   }
   async update(userId, updateData) {
-    return await User.findByIdAndUpdate(userId, updateData, { new: true });
+    return await UserEntity.findByIdAndUpdate(userId, updateData, { new: true });
   }
   async delete(userId) {
-    return await User.findByIdAndDelete(userId);
+    return await UserEntity.findByIdAndDelete(userId);
   }
 }
 

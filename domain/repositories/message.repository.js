@@ -1,26 +1,32 @@
-const Message = require("../entities/message.entity");
+const MessageEntity = require("../entities/message.entity");
 
 class MessageRepository {
   async findAll(filter = {}, limit = 100) {
-    return await Message.find(filter).limit(limit);
+    return await MessageEntity.find(filter).limit(limit);
   }
   async findById(messageId) {
-    return await Message.findById({ messageId });
+    return await MessageEntity.findById({ messageId });
   }
+
   async findOne(query) {
-    return await Message.findOne(query);
+    return await MessageEntity.findOne(query);
   }
+
+  async find(query = {}, limit = 50) {
+    return await MessageEntity.find(query).limit(limit);
+  }
+
   async create(messageData) {
-    const message = new Message(messageData);
+    const message = new MessageEntity(messageData);
     return await message.save();
   }
   async update(messageId, updateData) {
-    return await Message.findByIdAndUpdate(messageId, updateData, {
+    return await MessageEntity.findByIdAndUpdate(messageId, updateData, {
       new: true,
     });
   }
   async delete(messageId) {
-    return await Message.findByIdAndDelete(messageId);
+    return await MessageEntity.findByIdAndDelete(messageId);
   }
 }
 

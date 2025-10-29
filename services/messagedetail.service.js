@@ -1,12 +1,12 @@
-const MessageDetail = require("../domain/repositories/messagedetail.repository");
+const MessageDetailRepository = require("../domain/repositories/messagedetail.repository");
 
 class MessageDetailService {
   async getAll() {
-    return await MessageDetail.find();
+    return await MessageDetailRepository.find();
   }
 
   async createOrUpdate(detailData) {
-    const existing = await MessageDetail.findOne({
+    const existing = await MessageDetailRepository.findOne({
       messageId: detailData.messageId,
       type: detailData.type,
     });
@@ -14,12 +14,12 @@ class MessageDetailService {
       Object.assign(existing, detailData);
       return await existing.save();
     } else {
-      return await MessageDetail.create(detailData);
+      return await MessageDetailRepository.create(detailData);
     }
   }
 
   async getByMessageId(messageId) {
-    return await MessageDetail.find({ messageId });
+    return await MessageDetailRepository.find({ messageId });
   }
 }
 

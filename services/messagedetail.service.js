@@ -1,4 +1,4 @@
-const MessageDetail = require("../entity/messagedetail.repository");
+const MessageDetail = require("../domain/repositories/messagedetail.repository");
 
 class MessageDetailService {
   async getAll() {

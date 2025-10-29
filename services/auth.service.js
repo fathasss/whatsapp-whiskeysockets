@@ -1,4 +1,4 @@
-const User = require("../entity/user.repository");
+const User = require("../domain/repositories/user.repository");
 const  generateToken  = require("../middleware");
 const bcrypt = require("bcrypt"); 
 

@@ -5,8 +5,8 @@ const {
   stopBaileysClient,
 } = require("../sockets/whatsapp.client");
 const router = express.Router();
-const { accounts } = require("../dtos/accounts");
-const messageService = require("../services/messages-service");
+const { accounts } = require("../dtos/accounts.dtos");
+const messageService = require("../services/messages.service");
 
 /**
  * @swagger

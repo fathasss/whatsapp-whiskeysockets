@@ -1,4 +1,4 @@
-const Messages = require("../entity/message");
+const Messages = require("../entity/message.repository");
 
 class MessagesService {
   async getAll() {

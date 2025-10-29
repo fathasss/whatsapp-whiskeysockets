@@ -6,7 +6,7 @@ const {
   fetchLatestBaileysVersion,
 } = require("@whiskeysockets/baileys");
 const qrcode = require("qrcode");
-const { accounts } = require("../dtos/accounts");
+const { accounts } = require("../dtos/accounts.dtos");
 const pino = require("pino");
 const { listener } = require("./whatsapp.listener");
 

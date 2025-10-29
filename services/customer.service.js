@@ -1,4 +1,4 @@
-const Customer = require("../entity/customer");
+const Customer = require("../entity/customer.repository");
 
 class CustomerService {
   async getAll() {

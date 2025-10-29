@@ -1,6 +1,6 @@
 const { downloadContentFromMessage } = require("@whiskeysockets/baileys");
 const crypto = require("crypto");
-const { getAccount } = require("../models/accounts");
+const { getAccount } = require("../dtos/accounts");
 const customerService = require("../services/customer-service");
 const messageService = require("../services/messages-service");
 const messageDetailService = require("../services/messagedetail-service");

@@ -6,7 +6,7 @@ const {
   fetchLatestBaileysVersion,
 } = require("@whiskeysockets/baileys");
 const qrcode = require("qrcode");
-const { accounts } = require("../models/accounts");
+const { accounts } = require("../dtos/accounts");
 const pino = require("pino");
 const { listener } = require("./whatsapp.listener");
 
@@ -54,7 +54,7 @@ async function createBaileysClient(accountId, isReconnect = false) {
         console.log(`✅ ${accountId} connected successfully!`);
 
         // 🎧 Dinleme işlemini yalnızca bağlantı kurulduğunda başlat
-        if (typeof listenMessages === "function") {
+        if (typeof listener === "function") {
           listener(accountId, sock);
           console.log(`🎧 Listening started for ${accountId}`);
         }

@@ -5,7 +5,7 @@ const {
   stopBaileysClient,
 } = require("../sockets/whatsapp.client");
 const router = express.Router();
-const { accounts } = require("../dtos/accounts.dtos");
+const { accounts } = require("../globals/accounts.dtos");
 const messageService = require("../services/messages.service");
 
 /**

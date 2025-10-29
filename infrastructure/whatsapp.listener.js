@@ -4,6 +4,7 @@ const { getAccount } = require("../globals/accounts.dtos");
 const customerService = require("../services/customer.service");
 const messageService = require("../services/messages.service");
 const messageDetailService = require("../services/messagedetail.service");
+const logger = require("../config/logger");
 require("dotenv").config({ debug: false });
 
 //#region 🔹 Gelen mesajları dinleyen ve işleyen fonksiyon
@@ -47,7 +48,7 @@ async function listener(accountId, sock) {
         const sender = await senderInfo(msg, sock);
 
         if (!_customerId || !_chatId) {
-          console.error("❌ Kritik alanlar eksik:", { _customerId, _chatId });
+          logger.error("❌ Kritik alanlar eksik:", { _customerId, _chatId });
           continue;
         }
 
@@ -120,14 +121,14 @@ async function listener(accountId, sock) {
           messageId: message._id,
         });
 
-        console.log("✅ Mesaj MongoDB'ye kaydedildi:", {
+        logger.info("✅ Mesaj MongoDB'ye kaydedildi:", {
           chatId: message.chatId,
           customerId: customer.customerId,
         });
         //#endregion
       } catch (err) {
-        console.error("❌ Service error:", err.message);
-        console.error("📋 Error details:", err.stack);
+        logger.error("❌ Service error:", err.message);
+        logger.error("📋 Error details:", err.stack);
       }
     }
   };
@@ -195,7 +196,7 @@ async function extractMessageContent(actualMessageType, rawMessage) {
 
     return content;
   } catch (err) {
-    console.error("❌ extractMessageContent hatası:", err);
+    logger.error("❌ extractMessageContent hatası:", err);
     content.text = `[Hata: ${actualMessageType} işlenemedi]`;
     return content;
   }
@@ -211,7 +212,7 @@ async function handleMediaMessage(mediaMessage, type, content) {
       `[${type.charAt(0).toUpperCase() + type.slice(1)}]`;
 
     if (!mediaMessage.mediaKey) {
-      console.warn("⚠️ Media key yok, dosya indirilemez");
+      logger.warn("⚠️ Media key yok, dosya indirilemez");
       return;
     }
 
@@ -231,7 +232,7 @@ async function handleMediaMessage(mediaMessage, type, content) {
     content.fileSha256 = fileSha256;
     content.fileLength = fileLength;
   } catch (error) {
-    console.error("❌ Media işleme hatası:", error);
+    logger.error("❌ Media işleme hatası:", error);
     content.text = `[${type} - hata]`;
   }
 }

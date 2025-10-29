@@ -9,12 +9,13 @@ const qrcode = require("qrcode");
 const { accounts } = require("../globals/accounts.dtos");
 const pino = require("pino");
 const { listener } = require("./whatsapp.listener");
+const logger = require("../config/logger");
 
 //#region 🔹 Baileys istemcisini başlatma fonksiyonu
 async function createBaileysClient(accountId, isReconnect = false) {
   let sock;
   try {
-    console.log(
+    logger.info(
       isReconnect
         ? `🔁 Reconnecting WhatsApp session for: ${accountId}`
         : `🚀 Starting new WhatsApp session for: ${accountId}`
@@ -44,42 +45,42 @@ async function createBaileysClient(accountId, isReconnect = false) {
       if (qr) {
         accounts[accountId].currentQR = await qrcode.toDataURL(qr);
         accounts[accountId].status = "QR_READY";
-        console.log(`🔑 QR code generated for ${accountId}`);
+        logger.info(`🔑 QR code generated for ${accountId}`);
       }
 
       // ✅ QR kod okundu, bağlantı kuruldu
       if (connection === "open") {
         accounts[accountId].status = "CONNECTED";
         accounts[accountId].currentQR = null;
-        console.log(`✅ ${accountId} connected successfully!`);
+        logger.info(`✅ ${accountId} connected successfully!`);
 
         // 🎧 Dinleme işlemini yalnızca bağlantı kurulduğunda başlat
         if (typeof listener === "function") {
           listener(accountId, sock);
-          console.log(`🎧 Listening started for ${accountId}`);
+          logger.info(`🎧 Listening started for ${accountId}`);
         }
       }
 
       // ❌ Bağlantı kapandıysa
       if (connection === "close") {
         const reason = new Boom(lastDisconnect?.error)?.output?.statusCode;
-        console.log(`⚠️ ${accountId} disconnected (reason: ${reason})`);
+        logger.info(`⚠️ ${accountId} disconnected (reason: ${reason})`);
 
         try {
           if (sock?.end) await sock.end();
         } catch (e) {
-          console.warn(`⚠️ Socket cleanup failed for ${accountId}:`, e.message);
+          logger.warn(`⚠️ Socket cleanup failed for ${accountId}:`, e.message);
         }
 
         switch (reason) {
           case DisconnectReason.loggedOut:
             accounts[accountId].status = "LOGGED_OUT";
             accounts[accountId].currentQR = null;
-            console.log(`❌ ${accountId} logged out manually.`);
+            logger.info(`❌ ${accountId} logged out manually.`);
             break;
 
           case 515:
-            console.warn(`🚫 ${accountId} hit rate limit (515). Retrying...`);
+            logger.warn(`🚫 ${accountId} hit rate limit (515). Retrying...`);
             accounts[accountId].status = "RATE_LIMIT";
             setTimeout(
               () => createBaileysClient(accountId, true),
@@ -89,13 +90,13 @@ async function createBaileysClient(accountId, isReconnect = false) {
 
           case DisconnectReason.connectionClosed:
           case DisconnectReason.timedOut:
-            console.log(`♻️ ${accountId} reconnecting after timeout...`);
+            logger.info(`♻️ ${accountId} reconnecting after timeout...`);
             accounts[accountId].status = "RECONNECTING";
             await createBaileysClient(accountId, true);
             break;
 
           default:
-            console.log(`🔄 ${accountId} restarting session...`);
+            logger.info(`🔄 ${accountId} restarting session...`);
             await createBaileysClient(accountId, true);
             break;
         }
@@ -110,7 +111,7 @@ async function createBaileysClient(accountId, isReconnect = false) {
       response: `STATUS: ${accounts[accountId].status} QR : ${accounts[accountId].currentQR}`,
     };
   } catch (err) {
-    console.error(
+    logger.error(
       `❌ startWhatsApp error for ${accountId}:`,
       err.message || err
     );
@@ -119,9 +120,9 @@ async function createBaileysClient(accountId, isReconnect = false) {
     if (sock?.end) {
       try {
         await sock.end();
-        console.log(`🧹 Socket for ${accountId} closed after error.`);
+        logger.info(`🧹 Socket for ${accountId} closed after error.`);
       } catch (closeErr) {
-        console.warn(
+        logger.warn(
           `⚠️ Failed to close socket for ${accountId}:`,
           closeErr.message
         );
@@ -143,7 +144,7 @@ async function stopBaileysClient(accountId) {
   try {
     const account = accounts[accountId];
     if (!account || !account.sock) {
-      console.log(
+      logger.info(
         `⚠️ ${accountId} için aktif bir WhatsApp bağlantısı bulunamadı.`
       );
       return {
@@ -157,10 +158,10 @@ async function stopBaileysClient(accountId) {
     account.sock.ev.removeAllListeners();
     delete accounts[accountId]; // Hafızadan sil
 
-    console.log(`🛑 ${accountId} için WhatsApp bağlantısı sonlandırıldı.`);
+    logger.log(`🛑 ${accountId} için WhatsApp bağlantısı sonlandırıldı.`);
     return { success: true, message: "Bağlantı durduruldu", response: null };
   } catch (error) {
-    console.error(`❌ ${accountId} durdurulurken hata oluştu:`, error);
+    logger.error(`❌ ${accountId} durdurulurken hata oluştu:`, error);
     return {
       success: false,
       message: "Bağlantı durdurulamadı",

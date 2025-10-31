@@ -10,6 +10,7 @@ const { accounts } = require("../globals/accounts.dtos");
 const pino = require("pino");
 const { listener } = require("./whatsapp.listener");
 const logger = require("../config/logger");
+const fs = require("fs");
 //const account = require("../services/wpaccounts.service");
 
 //#region 🔹 Baileys istemcisini başlatma fonksiyonu
@@ -83,10 +84,7 @@ async function createBaileysClient(accountId, isReconnect = false) {
           case 515:
             logger.warn(`🚫 ${accountId} hit rate limit (515). Retrying...`);
             accounts[accountId].status = "RATE_LIMIT";
-            setTimeout(
-              () => createBaileysClient(accountId, true),
-              10000
-            );
+            setTimeout(() => createBaileysClient(accountId, true), 10000);
             break;
 
           case DisconnectReason.connectionClosed:
@@ -172,4 +170,28 @@ async function stopBaileysClient(accountId) {
 }
 //#endregion
 
-module.exports = { createBaileysClient, stopBaileysClient };
+//#region 🔹 Account Clear
+async function clearBaileysAccount(accountId) {
+  const auth_path = `./auth_info/${accountId}`;
+  if (fs.existsSync(auth_path)) {
+    fs.rmSync(auth_path, { recursive: true, force: true });
+    console.log(`🗑️ ${accountId} auth bilgileri silindi`);
+    return {
+      success: true,
+      message: `🗑️ ${accountId} auth bilgileri silindi`,
+      response: null,
+    };
+  }
+  return {
+    success: false,
+    message: `${accountId} ait auth bulunamadı!`,
+    response: null,
+  };
+}
+//#endregion
+
+module.exports = {
+  createBaileysClient,
+  stopBaileysClient,
+  clearBaileysAccount,
+};

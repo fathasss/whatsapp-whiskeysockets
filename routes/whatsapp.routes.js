@@ -3,6 +3,7 @@ const { sendMessage } = require("../infrastructure/whatsapp.listener");
 const {
   createBaileysClient,
   stopBaileysClient,
+  clearBaileysAccount,
 } = require("../infrastructure/whatsapp.client");
 const router = express.Router();
 const { accounts } = require("../globals/accounts.dtos");
@@ -308,6 +309,65 @@ router.post("/stop/:accountId", async (req, res) => {
   const { accountId } = req.params;
   try {
     const ok = await stopBaileysClient(accountId);
+    if (ok) {
+      return res.json({
+        success: true,
+        message: `Listening stopped for ${accountId}`,
+      });
+    }
+    return res.status(500).json({
+      success: false,
+      message: `Failed to stop listening for ${accountId}`,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: `Error stopping listening for ${accountId}: ${err.message}`,
+    });
+  }
+});
+
+/**
+ * @swagger
+ * /message/clear/{accountId}:
+ *   post:
+ *     summary: WhatsApp account deleted
+ *     tags: [Message]
+ *     parameters:
+ *       - in: path
+ *         name: accountId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: WhatsApp account ID
+ *     responses:
+ *       200:
+ *         description: Account deletion successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Account deletion failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ */
+router.post("/clear/:accountId", async (req, res) => {
+  const { accountId } = req.params;
+  try {
+    const ok = await clearBaileysAccount(accountId);
     if (ok) {
       return res.json({
         success: true,

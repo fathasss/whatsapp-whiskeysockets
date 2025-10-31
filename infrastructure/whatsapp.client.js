@@ -10,6 +10,7 @@ const { accounts } = require("../globals/accounts.dtos");
 const pino = require("pino");
 const { listener } = require("./whatsapp.listener");
 const logger = require("../config/logger");
+//const account = require("../services/wpaccounts.service");
 
 //#region 🔹 Baileys istemcisini başlatma fonksiyonu
 async function createBaileysClient(accountId, isReconnect = false) {

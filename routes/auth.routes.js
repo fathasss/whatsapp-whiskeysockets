@@ -29,18 +29,15 @@ const router = express.Router();
 router.post("/register", async (req, res) => {
   try {
     const { username, password, role } = req.body;
-    if (!username || !password)
+
+    if (!username || !password) {
       return res.status(400).json({ error: "Username ve password gerekli" });
+    }
 
-    // Şifre hash
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = new User({ username, password: hashedPassword, role });
-    await user.save();
-
+    const user = await User.create({ username, password, role });
     res.json({ message: "Kullanıcı oluşturuldu", username: user.username });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(400).json({ error: err.message });
   }
 });
 

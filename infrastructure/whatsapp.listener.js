@@ -12,11 +12,25 @@ async function listener(accountId, sock) {
   const messageHandler = async ({ messages }) => {
     for (const msg of messages) {
       try {
+        let chatName = "";
         if (!msg.message || !msg.key) continue;
 
         const _chatId = msg.key.remoteJid;
         const _customerId = msg.key.participant || _chatId;
         const messageType = Object.keys(msg.message)[0];
+
+        if (_chatId.endsWith("@g.us")) {
+          const metadata = await sock.groupMetadata(_chatId);
+          chatName = metadata.subject || "Group Chat";
+        } else {
+          if (msg.key.fromMe) {
+            const contact = await sock.onWhatsApp(_chatId);
+            chatName =
+              contact?.[0]?.notify || contact?.[0]?.name || "Private Chat";
+          } else {
+            chatName = msg.pushName || "Private Chat";
+          }
+        }
 
         let content = {
           text: "",
@@ -69,6 +83,7 @@ async function listener(accountId, sock) {
           chatId: _chatId,
           account: accountId,
           chatType: _chatId.endsWith("@g.us") ? "group" : "individual",
+          chatName: chatName,
           insertDate: new Date(),
           isBlocked: false,
           lastMessage: content.text || "[İçerik yok]",

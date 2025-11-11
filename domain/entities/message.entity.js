@@ -5,6 +5,7 @@ const MessageSchema = new mongoose.Schema({
   customerId: { type: String, required: true }, 
   account: String,
   chatType: String,
+  chatName: String,
   isBlocked: Boolean,
   lastMessage: String,
   lastMessageDate: Date,

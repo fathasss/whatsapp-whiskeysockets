@@ -22,6 +22,8 @@ const router = express.Router();
  *                 type: string
  *               password:
  *                 type: string
+ *               role:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Kullanıcı başarıyla oluşturuldu

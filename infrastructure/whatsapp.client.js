@@ -11,6 +11,7 @@ const pino = require("pino");
 const { listener } = require("./whatsapp.listener");
 const logger = require("../config/logger");
 const fs = require("fs");
+const path = require("path");
 //const account = require("../services/wpaccounts.service");
 
 //#region 🔹 Baileys istemcisini başlatma fonksiyonu
@@ -190,8 +191,49 @@ async function clearBaileysAccount(accountId) {
 }
 //#endregion
 
+//#region 🔹 AutoStart Function
+async function autoStartSessions() {
+  const authDir = path.join(__dirname, "../auth_info");
+  if (!fs.existsSync(authDir)) {
+    console.warn(`⚠️ ${authDir} bulunamadı, auto start atlandı.`);
+    return;
+  }
+
+  const accounts = fs
+    .readdirSync(authDir)
+    .filter((f) => fs.lstatSync(path.join(authDir, f)).isDirectory());
+
+  if (accounts.length > 0)
+    console.log(`🟢 ${accounts.length} kayıtlı hesap bulundu.`);
+  else console.warn("❌ Kayıtlı hesap bulunamadı.");
+
+  for (const accountId of accounts) {
+    const sessionPath = path.join(authDir, accountId);
+
+    // session bilgisi yoksa atla
+    const sessionFiles = fs
+      .readdirSync(sessionPath)
+      .filter((f) => f.endsWith(".json"));
+    if (!sessionFiles.length) {
+      console.log(
+        `⚠️ ${accountId} için session dosyası bulunamadı, atlanıyor.`
+      );
+      continue;
+    }
+
+    try {
+      await createBaileysClient(accountId, true);
+      console.log(`✅ ${accountId} başarıyla başlatıldı.`);
+    } catch (err) {
+      console.error(`❌ ${accountId} başlatılamadı:`, err.message);
+    }
+  }
+}
+//#endregion
+
 module.exports = {
   createBaileysClient,
   stopBaileysClient,
   clearBaileysAccount,
+  autoStartSessions,
 };

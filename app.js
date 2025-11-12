@@ -6,6 +6,7 @@ const whatsappRoutes = require("./routes/whatsapp.routes");
 const setupSwagger = require("./api-docs/swagger");
 const { webcrypto } = require("crypto");
 const path = require("path");
+const { autoStartSessions } = require("./infrastructure/whatsapp.client");
 
 require("dotenv").config({ path: path.join(__dirname, ".env") });
 globalThis.crypto = webcrypto;
@@ -26,10 +27,10 @@ process.on("uncaughtException", (err) => {
   logger.error("🚨 Uncaught Exception:", err);
 });
 
-
 app.use("/auth", authRoutes);
 app.use("/whatsapp", authMiddleware, whatsappRoutes);
 
-app.listen(process.env.PORT, () =>
-  logger.info(`Server running on port ${process.env.PORT}`)
-);
+app.listen(process.env.PORT, async () => {
+  logger.info(`Server running on port ${process.env.PORT}`);
+  await autoStartSessions();
+});
